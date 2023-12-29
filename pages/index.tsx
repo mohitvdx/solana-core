@@ -4,14 +4,25 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import AddressForm from '../components/AddressForm'
+import * as solanaWeb3 from '@solana/web3.js'
 
 const Home: NextPage = () => {
   const [balance, setBalance] = useState(0)
   const [address, setAddress] = useState('')
 
   const addressSubmittedHandler = (address: string) => {
-    setAddress(address)
-    setBalance(1000)
+    try {const key = new solanaWeb3.PublicKey(address);
+    setAddress(key.toBase58())
+
+    const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'))
+
+    connection.getBalance(key).then((balance) => {
+      setBalance(solanaWeb3.LAMPORTS_PER_SOL * balance / 1000000000)
+    }
+    )}
+    catch (err) {
+      console.log("The address is not a solana address");
+    }
   }
 
   return (
