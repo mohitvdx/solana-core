@@ -9,7 +9,7 @@ import * as solanaWeb3 from '@solana/web3.js'
 const Home: NextPage = () => {
   const [balance, setBalance] = useState(0)
   const [address, setAddress] = useState('')
-  const [executable, setExecutable] = useState('')
+  const [executable, setExecutable] = useState(false)
 
   const addressSubmittedHandler = (address: string) => {
     try {const key = new solanaWeb3.PublicKey(address);
@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       
       console.log(info)
       if (info != null) {
-        setExecutable(info.executable.toString())
+        setExecutable(info.executable)
       }
     })
 
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
       //remove the previous value from the state
       setAddress('Not a Valid address')
       setBalance(0)
-      setExecutable('')
+      setExecutable(false)
 
     }
   }
