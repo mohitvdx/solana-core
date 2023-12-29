@@ -9,6 +9,7 @@ import * as solanaWeb3 from '@solana/web3.js'
 const Home: NextPage = () => {
   const [balance, setBalance] = useState(0)
   const [address, setAddress] = useState('')
+  const [executable, setExecutable] = useState('')
 
   const addressSubmittedHandler = (address: string) => {
     try {const key = new solanaWeb3.PublicKey(address);
@@ -16,12 +17,27 @@ const Home: NextPage = () => {
 
     const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'))
 
+    connection.getAccountInfo(key).then((info) => {
+      
+      console.log(info)
+      if (info != null) {
+        setExecutable(info.executable.toString())
+      }
+    })
+
     connection.getBalance(key).then((balance) => {
       setBalance(solanaWeb3.LAMPORTS_PER_SOL * balance / 1000000000)
+  
     }
     )}
     catch (err) {
       console.log("The address is not a solana address");
+
+      //remove the previous value from the state
+      setAddress('Not a Valid address')
+      setBalance(0)
+      setExecutable('')
+
     }
   }
 
@@ -29,14 +45,18 @@ const Home: NextPage = () => {
     <div className={styles.App}>
       <header className={styles.AppHeader}>
         <p>
-          Start Your Solana Journey
+          Solana Balance Checker
         </p>
         <AddressForm handler={addressSubmittedHandler} />
         <p>{`Address: ${address}`}</p>
         <p>{`Balance: ${balance} SOL`}</p>
+        <p>{`Executable: ${executable}`}</p>
       </header>
     </div>
   )
 }
 
 export default Home
+
+
+// Use this address to test: ComputeBudget111111111111111111111111111111
